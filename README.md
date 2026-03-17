@@ -68,6 +68,7 @@ POST /api/Inventory/sell
 
 ## 📌 Sample Response
 ### Purchase Response
+- 구매 성공 시 현재 보유 골드를 함께 반환합니다.
 ```json
 {
   "message": "Purchase completed",
@@ -76,6 +77,7 @@ POST /api/Inventory/sell
 ```
 
 ### Sell Response
+- 판매 성공 시 획득 골드(`earnedGold`)와 최종 골드를 반환합니다.
 ```json
 {
   "message": "Item sold",
@@ -85,6 +87,7 @@ POST /api/Inventory/sell
 ```
 
 ### Inventory Response
+- 인벤토리 조회 시 유저 정보 + 보유 아이템 목록을 한 번에 확인할 수 있습니다.
 ```json
 {
   "id": 1,
@@ -101,6 +104,7 @@ POST /api/Inventory/sell
 
 ## 🧩 주요 코드 (핵심 로직)
 ### 1) Gold 차감/증가 로직
+- 구매 시 골드 차감, 판매 시 골드 증가를 처리하는 핵심 부분입니다.
 ```csharp
 // purchase
 var totalPrice = item.Price * request.Quantity;
@@ -113,6 +117,7 @@ inv.User.Gold += sellPrice;
 ```
 
 ### 2) 거래 로그 저장
+- 모든 경제 행동(BUY/USE/SELL)을 로그로 남겨 추적 가능하게 합니다.
 ```csharp
 db.TransactionLogs.Add(new TransactionLog
 {
