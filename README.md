@@ -66,6 +66,65 @@ POST /api/Inventory/sell
 }
 ```
 
+## 📌 Sample Response
+### Purchase Response
+```json
+{
+  "message": "Purchase completed",
+  "gold": 500
+}
+```
+
+### Sell Response
+```json
+{
+  "message": "Item sold",
+  "earnedGold": 50,
+  "gold": 550
+}
+```
+
+### Inventory Response
+```json
+{
+  "id": 1,
+  "nickname": "Zero",
+  "gold": 550,
+  "items": [
+    { "itemId": 1, "name": "Potion", "quantity": 2 },
+    { "itemId": 2, "name": "Sword", "quantity": 1 }
+  ]
+}
+```
+
+---
+
+## 🧩 주요 코드 (핵심 로직)
+### 1) Gold 차감/증가 로직
+```csharp
+// purchase
+var totalPrice = item.Price * request.Quantity;
+if (user.Gold < totalPrice) return BadRequest("Not enough gold");
+user.Gold -= totalPrice;
+
+// sell
+var sellPrice = (inv.Item.Price / 2) * request.Quantity;
+inv.User.Gold += sellPrice;
+```
+
+### 2) 거래 로그 저장
+```csharp
+db.TransactionLogs.Add(new TransactionLog
+{
+    UserId = request.UserId,
+    Type = "BUY", // USE, SELL
+    ItemId = request.ItemId,
+    Quantity = request.Quantity,
+    GoldDelta = -totalPrice,
+    CreatedAt = DateTime.UtcNow
+});
+```
+
 ---
 
 ## ⚙️ Run
