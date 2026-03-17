@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.37027.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameInventoryApi", "GameInventoryApi\GameInventoryApi.csproj", "{34EB3D08-98F1-4A76-B842-1E35167B8A1E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameInventoryApi.Tests", "GameInventoryApi.Tests\GameInventoryApi.Tests.csproj", "{89484072-1E26-47E1-87AF-AE45486B38EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{34EB3D08-98F1-4A76-B842-1E35167B8A1E}.Release|x64.Build.0 = Release|Any CPU
 		{34EB3D08-98F1-4A76-B842-1E35167B8A1E}.Release|x86.ActiveCfg = Release|Any CPU
 		{34EB3D08-98F1-4A76-B842-1E35167B8A1E}.Release|x86.Build.0 = Release|Any CPU
+		{89484072-1E26-47E1-87AF-AE45486B38EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89484072-1E26-47E1-87AF-AE45486B38EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89484072-1E26-47E1-87AF-AE45486B38EB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{89484072-1E26-47E1-87AF-AE45486B38EB}.Debug|x64.Build.0 = Debug|Any CPU
+		{89484072-1E26-47E1-87AF-AE45486B38EB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{89484072-1E26-47E1-87AF-AE45486B38EB}.Debug|x86.Build.0 = Debug|Any CPU
+		{89484072-1E26-47E1-87AF-AE45486B38EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89484072-1E26-47E1-87AF-AE45486B38EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89484072-1E26-47E1-87AF-AE45486B38EB}.Release|x64.ActiveCfg = Release|Any CPU
+		{89484072-1E26-47E1-87AF-AE45486B38EB}.Release|x64.Build.0 = Release|Any CPU
+		{89484072-1E26-47E1-87AF-AE45486B38EB}.Release|x86.ActiveCfg = Release|Any CPU
+		{89484072-1E26-47E1-87AF-AE45486B38EB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
