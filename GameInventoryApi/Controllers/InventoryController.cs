@@ -14,6 +14,7 @@ public class InventoryController(GameDbContext db) : ControllerBase
     public async Task<IActionResult> GetInventory(int userId)
     {
         var user = await db.Users
+            .AsNoTracking()
             .Include(x => x.InventoryItems)
                 .ThenInclude(x => x.Item)
             .FirstOrDefaultAsync(x => x.Id == userId);
@@ -39,14 +40,14 @@ public class InventoryController(GameDbContext db) : ControllerBase
     [HttpPost("purchase")]
     public async Task<IActionResult> Purchase([FromBody] PurchaseRequest request)
     {
-        if (request.Quantity <= 0) return BadRequest("Quantity must be greater than 0");
+        await using var tx = await db.Database.BeginTransactionAsync();
 
         var user = await db.Users.FirstOrDefaultAsync(x => x.Id == request.UserId);
         var item = await db.Items.FirstOrDefaultAsync(x => x.Id == request.ItemId);
 
         if (user is null || item is null) return NotFound("User or Item not found");
 
-        var totalPrice = item.Price * request.Quantity;
+        var totalPrice = checked(item.Price * request.Quantity);
         if (user.Gold < totalPrice) return BadRequest("Not enough gold");
 
         user.Gold -= totalPrice;
@@ -65,7 +66,7 @@ public class InventoryController(GameDbContext db) : ControllerBase
         }
         else
         {
-            inv.Quantity += request.Quantity;
+            inv.Quantity = checked(inv.Quantity + request.Quantity);
         }
 
         db.TransactionLogs.Add(new TransactionLog
@@ -79,6 +80,7 @@ public class InventoryController(GameDbContext db) : ControllerBase
         });
 
         await db.SaveChangesAsync();
+        await tx.CommitAsync();
 
         return Ok(new { message = "Purchase completed", user.Gold });
     }
@@ -86,7 +88,7 @@ public class InventoryController(GameDbContext db) : ControllerBase
     [HttpPost("use")]
     public async Task<IActionResult> UseItem([FromBody] UseItemRequest request)
     {
-        if (request.Quantity <= 0) return BadRequest("Quantity must be greater than 0");
+        await using var tx = await db.Database.BeginTransactionAsync();
 
         var inv = await db.InventoryItems
             .Include(x => x.User)
@@ -114,6 +116,7 @@ public class InventoryController(GameDbContext db) : ControllerBase
         });
 
         await db.SaveChangesAsync();
+        await tx.CommitAsync();
 
         return Ok(new
         {
@@ -126,7 +129,7 @@ public class InventoryController(GameDbContext db) : ControllerBase
     [HttpPost("sell")]
     public async Task<IActionResult> SellItem([FromBody] SellItemRequest request)
     {
-        if (request.Quantity <= 0) return BadRequest("Quantity must be greater than 0");
+        await using var tx = await db.Database.BeginTransactionAsync();
 
         var inv = await db.InventoryItems
             .Include(x => x.User)
@@ -136,10 +139,10 @@ public class InventoryController(GameDbContext db) : ControllerBase
         if (inv is null) return NotFound("Inventory item not found");
         if (inv.Quantity < request.Quantity) return BadRequest("Not enough item quantity");
 
-        var sellPrice = (inv.Item.Price / 2) * request.Quantity;
+        var sellPrice = checked((inv.Item.Price / 2) * request.Quantity);
 
         inv.Quantity -= request.Quantity;
-        inv.User.Gold += sellPrice;
+        inv.User.Gold = checked(inv.User.Gold + sellPrice);
 
         if (inv.Quantity == 0)
         {
@@ -157,6 +160,7 @@ public class InventoryController(GameDbContext db) : ControllerBase
         });
 
         await db.SaveChangesAsync();
+        await tx.CommitAsync();
 
         return Ok(new { message = "Item sold", earnedGold = sellPrice, inv.User.Gold });
     }

@@ -1,3 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace GameInventoryApi.Contracts;
 
-public record SellItemRequest(int UserId, int ItemId, int Quantity = 1);
+public class SellItemRequest
+{
+    [Range(1, int.MaxValue)]
+    public int UserId { get; set; }
+
+    [Range(1, int.MaxValue)]
+    public int ItemId { get; set; }
+
+    [Range(1, 100)]
+    public int Quantity { get; set; } = 1;
+}
